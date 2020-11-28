@@ -4,22 +4,52 @@ h = 600
 w = 800
 
 root = tk.Tk()
-
 canvas = tk.Canvas(root, height=h, width=w)
 canvas.pack()
 
-# frame = tk.Frame(root)
-# frame.place(relx=0.1, rely=0.1, relwidth=0.8, relheight=0.8)
 
-# background_image = tk.PhotoImage(file='trump3.png')
-# background_label = tk.Label(frame, image=background_image)
-# background_label.place(relwidth=1, relheight=1)
+# cloud
+wcPic = tk.PhotoImage(file='wc.png')
+trump = tk.PhotoImage(file='trump3.png')
 
-# label = tk.Label(frame, bg="gray", text="Select Rallies")
-# label.place(relx=0.1, rely=0.1, relwidth=0.2, relheight=0.1)
+trumpFrame = tk.Frame(root, bg="black")
+trumpFrame.place(relx=0.3, rely=0.4, relwidth=0.6, relheight=0.5)
 
-search = tk.Frame(root, bg="black")
-search.place(relx=0.05, rely=0.05, relwidth=0.2, relheight=0.1)
+trumpPhoto = tk.Label(trumpFrame, image=trump)
+trumpPhoto.place(relx=0.01, rely=0.01, relwidth=0.98, relheight=0.98)
+
+cloudButton = tk.Button(trumpFrame, text="show wordcloud", command=lambda: showCloud())
+cloudButton.place(relx=0.01, rely=0.01, relwidth=0.3, relheight=0.1)
+
+def showCloud():
+    cloudFrame = tk.Frame(root, bg="black")
+    cloudFrame.place(relx=0.4, rely=0.6, relwidth=0.4, relheight=0.3)
+
+    cloudPhoto = tk.Label(cloudFrame, image=wcPic)
+    cloudPhoto.place(relx=0.01, rely=0.01, relwidth=0.98, relheight=0.98)
+
+
+# search
+searchFrame = tk.Frame(root, bg="black")
+searchFrame.place(relx=0.05, rely=0.05, relwidth=0.2, relheight=0.1)
+
+searchLabel = tk.Label(searchFrame, text="enter word:")
+searchLabel.place(relwidth=0.5, relheight=0.5)
+
+searchBar = tk.Entry(searchFrame)
+searchBar.place(rely=0.5, relwidth=1, relheight=0.5)
+
+searchButton = tk.Button(searchFrame, text="search", command=lambda: printInfo(searchBar.get()))
+searchButton.place(relx=0.5, relwidth=0.5, relheight=0.5)
+
+def printInfo(word):
+    tempstr = ''
+    selectedRallies = box.curselection()
+    for i in range(len(selectedRallies)):
+        tempstr += str(selectedRallies[i]) + ', '
+    tempstr = 'From rallies ' + tempstr
+    infostr = 'You searched for: %s \n%s\n%s was said x times \n' % (word, tempstr, word)
+    linfo['text'] = infostr
 
 # rally selection
 select = tk.Frame(root, bg="black")
@@ -32,12 +62,14 @@ for x in range(31):
     else:
         box.insert(x, str(x))
 box.place(relx=0, rely=0, relwidth=1, relheight=1)
+# call function with appropriate file names
 
 
+# display info
 info = tk.Frame(root, bg="black")
 info.place(relx=0.30, rely=0.05, relwidth=0.6, relheight=0.3)
 
-cloud = tk.Frame(root, bg="black")
-cloud.place(relx=0.30, rely=0.4, relwidth=0.6, relheight=0.5)
+linfo = tk.Label(info, text="display info about word")
+linfo.place(relwidth=1, relheight=1)
 
 root.mainloop()
