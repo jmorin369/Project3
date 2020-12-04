@@ -36,7 +36,7 @@ def makeFile(rallyList):
         file = rallyList[it] + '.txt'
         with open(file) as f:
             text += f.read()
-            # print(file)
+    print(file)
     return text
 
 
@@ -84,6 +84,8 @@ searchButton = tk.Button(searchFrame, text="search", command=lambda: printInfo(s
 searchButton.place(relx=0.5, relwidth=0.5, relheight=0.5)
 
 def printInfo(word):
+    cntHash = 0
+    cntTree = 0
     rallyList = []
     rallyStr = ''
     selectedRallies = box.curselection()
@@ -100,10 +102,10 @@ def printInfo(word):
     infostr = 'You searched for: %s \n' % (word)
     infostr += 'From Rallies: \n%s' % (rallyStr)
     cntHash = obj.getCount(word)
-    cntTree = 'AVL search function???'
+    cntTree = (omap.search(word)).count
     infostr += 'Results from:\n'
     infostr += 'Hash Table: \t\t\t AVL Tree:\n'
-    infostr += 'Count: %d \t\t\t //TODO: %s' % (cntHash, cntTree)
+    infostr += 'Count: %d \t\t\t Count: %d\n' % (cntHash, cntTree)
     infostr += '//TODO: Print Search & Insert Time'
     infoLabel['text'] = infostr
 

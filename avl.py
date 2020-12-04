@@ -7,155 +7,122 @@ class Node:
 
 
 class AVL(object):
-    
     def __init__(self):
         self.nodes = 0
         self.root  = None
-
 #########################################################
                ### Private Functions ###
 #########################################################
-
+## ROTATION ##
     def __rotateLeft(self, root):
         if (not root):
             return root
         child  = root.right
         gchild = root.right.left
-
         child.left = root
         root.right = gchild
         return child
-
     def __rotateRight(self, root):        
         if (not root):
             return root 
         child  = root.left
         gchild = root.left.right
-
         root.left   = gchild
         child.right = root
         return child
-
     def __rotateLeftRight(self, root):
         if (not root):
             return root
         child   = root.left
         gchild  = root.left.right
         ggchild = root.left.right.left
-
         # Leftward Rotation
         gchild.left = child
         child.right = ggchild
         root.left   = gchild
-
         # Rightward Rotation
         return self.__rotateRight(root)
-
     def __rotateRightLeft(self, root):
         if (not root):
                 return root
-        child   = root.right
-        gchild  = root.right.left
-        ggchild = root.right.left.right
-
+        child   = root.right;
+        gchild  = root.right.left;
+        ggchild = root.right.left.right;
         # Rightward Rotation
-        gchild.right = child
-        child.left   = ggchild
-        root.right   = gchild
-
+        gchild.right = child;
+        child.left   = ggchild;
+        root.right   = gchild;
         # Leftward Rotation
         return self.__rotateLeft(root)
-    
-    def findHeight(self, root):
-        height = 0
+## INSERTION ## 
+    def __insert(self, root, word):
+        # BST Searh
         if (not root):
-            return height
-        
-        # Recursive Case
-        height = max(height, self.findHeight(root.left))
-        height = max(height, self.findHeight(root.right))
-
-        # Base Case
-        return height + 1
-
+            self.nodes += 1
+            return Node(word, 1), True
+        elif (root.word > word):
+            root.left, Rotate  = self.__insert(root.left, word)
+        elif (root.word < word):
+            root.right, Rotate = self.__insert(root.right, word)
+        else:
+            root.count += 1
+            return root, False
+        # Balance tree
+        if (Rotate):
+            bf = self.findHeight(root.left) - self.findHeight(root.right)
+            if (bf > 1):
+    #             child_bf = self.findHeight(root.left.left) - self.findHeight(root.left.right)
+                if (word < root.left.word): 
+                    return self.__rotateRight(root), False
+                else:
+                    return self.__rotateLeftRight(root), False
+            elif (bf < -1):
+    #             child_bf = self.findHeight(root.right.left) - self.findHeight(root.right.right)
+                if (word < root.right.word):
+                    return self.__rotateRightLeft(root), False
+                else:
+                    return self.__rotateLeft(root), False
+        return root, Rotate
+## SEARCHING ##
+    def __find(self, root, word):
+        if (not root): 
+            return Node(word, 0)
+        elif (root.word == word):
+            return root
+        elif (root.word > word):
+            return self.__find(root.left, word)
+        elif (root.word < word):
+            return self.__find(root.right, word)
+## PRINTING ##
+    def __printInOrder(self, root):
+        if (not root):
+            return
+        self.__printInOrder(root.left)
+        print("{0}: {1}".format(root.word, root.count))
+        self.__printInOrder(root.right)
 #########################################################
                 ### Public Functions ###
 #########################################################
-    
-    def insert(self, root, word):
-        # BST Search
-        if (not root):
-            self.nodes += 1
-            return Node(word, 1)
-        elif (root.word > word):
-            root.left  = self.insert(root.left, word)
-        elif (root.word < word):
-            root.right = self.insert(root.right, word)
-        else:
-            root.count += 1
-            return root
-                    
-        # Balance tree
-        bf = self.findHeight(root.left) - self.findHeight(root.right)
-        if (bf > 1):
-#             child_bf = self.findHeight(root.left.left) - self.findHeight(root.left.right)
-            if (word < root.left.word): 
-#                 print("{0} Right".format(root.worpd))
-                return self.__rotateRight(root)
-            else:
-#                 print("{0} LeftRight".format(root.word))
-                return self.__rotateLeftRight(root)
-        elif (bf < -1):
-#             child_bf = self.findHeight(root.right.left) - self.findHeight(root.right.right)
-            if (word < root.right.word):
-#                 print("{0} RightLeft".format(root.word))
-                return self.__rotateRightLeft(root)
-            else:
-#                 print("{0} Left".format(root.word))
-                return self.__rotateLeft(root)
-
-# key < node->left->key
-                
-        return root
-    
     def add(self, word):
         if (not self.root):
             self.root = Node(word,1)
         else:
-            self.root = self.insert(self.root, word)
-            
-    def printPreOrder(self, root):
+            self.root, null = self.__insert(self.root, word)
+    def search(self, word):
+        return self.__find(self.root, word)
+    def findHeight(self, root):
+        height = 0;
         if (not root):
-            return
-        print("{0}: {1}".format(root.word, root.count))
-        self.printPreOrder(root.left)
-        self.printPreOrder(root.right)   
-            
-    def printInOrder(self, root):
-        if (not root):
-            return
-        self.printInOrder(root.left)
-        print("{0}: {1}".format(root.word, root.count))
-        self.printInOrder(root.right)
-        
-    def printPostOrder(self, root):
-        if (not root):
-            return
-        self.printPostOrder(root.left)
-        self.printPostOrder(root.right)
-        print("{0}: {1}".format(root.word, root.count))
-        
+            return height
+        # Recursive Case
+        height = max(height, self.findHeight(root.left))
+        height = max(height, self.findHeight(root.right))
+        # Base Case
+        return height + 1  
     def printTree(self):
-        self.printInOrder(self.root)
-#         print()
-#         self.printPreOrder(self.root)
-#         print()
-#         self.printPostOrder(self.root)
-        
-        
+        self.__printInOrder(self.root)
     def printCount(self):
         print(self.nodes)
-        
     def printHeight(self):
         print(self.findHeight(self.root))
 
