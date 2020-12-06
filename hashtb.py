@@ -23,12 +23,11 @@ def hashCalc(key):
     for i in key:
         num = ord(i)
         hVal = ((hVal << 5) + hVal) + num  # hVal * 33 + char
-    return hVal % 301020913
-
+    return hVal % 3010913
 
 class HashTable:
     def __init__(self):
-        self.table = [None] * 301020913
+        self.table = [None] * 3010913
 
     def insert(self, key):
         hash_key = hashCalc(key)
@@ -72,10 +71,24 @@ class HashTable:
         freqList.sort(key=lambda x: x[1], reverse=True)  # sort list by word count
         return freqList[0:k]  # return list of k most used words
 
+    def getCounts(self):
+        # get dictionary of counts and how many times each count exists
+        Dict = {}
+        for arr in self.table:  # iterate through hash table
+            if arr is not None:
+                for word in arr:   # iterate through list of nodes at hash table
+                    if word.cnt in Dict.keys():   # if the count already exists as a key in the dict
+                        Dict[word.cnt] += 1
+                    else:                           # else if count is not yet a key in the dict
+                        Dict[word.cnt] = 1
+        return Dict  # return dict of all counts and number of repetitions of that count
 
 # Main Driver Code (for testing)
 # obj = HashTable()
-# obj.insert("Hash") #1
+# obj.insert("Hash") #2
+# obj.insert("Hash")
+# obj.insert("AVL") #2
+# obj.insert("AVL")
 # obj.insert("implementation") #4
 # obj.insert("implementation")
 # obj.insert("implementation")
@@ -100,13 +113,24 @@ class HashTable:
 # obj.insert("table")
 # obj.insert("table")
 # obj.insert("table")
-# obj.insert("Python") #7
+# obj.insert("Python") #8
 # obj.insert("Python")
 # obj.insert("Python")
 # obj.insert("Python")
 # obj.insert("Python")
 # obj.insert("Python")
 # obj.insert("Python")
+# obj.insert("Python")
+# obj.insert("Hat") #3
+# obj.insert("Hat")
+# obj.insert("Hat")
+# obj.insert("Three") #3
+# obj.insert("Three")
+# obj.insert("Three")
+# Dict = obj.getCounts()
+# print(Dict)
+# myList = obj.getKMostFrequent(3)
+# print(myList)
 # count = obj.getCount("Hash")
 # print(count)
 # count = obj.getCount("implementation")
