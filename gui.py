@@ -1,21 +1,32 @@
 import os
+import time
 import tkinter as tk
 import hashtb as ht
 import avl as tree
 
+from wordcloud import WordCloud, STOPWORDS
+from PIL import Image
+import numpy as np
+
 currdir = os.path.dirname(__file__)
 
-# avl tree & hash table nteraction
 omap = tree.AVL()
 obj = ht.HashTable()
 
+
+# turns the set of txt files from avl.py into a touple for easy manipulation
 spch = [] 
 for item in tree.speeches:
     spch.append(item) # TODO: make this be in order??
 
+treeTime = 0.0
+hashTime = 0.0
+print("time initialized to:%f%f"%(treeTime, hashTime))
 def parse(text):
+    # tree insertion
+    treeStart = time.time()
+    print("time beofre tree insertion: %f" % treeStart)
     word = ""
-    # file = open(file)
     for line in text: 
         line = line.lower()
         for char in line: 
@@ -24,10 +35,36 @@ def parse(text):
                 if word != "":
                     # TODO: time these functions
                     omap.add(word)
+                word = ""
+            else:
+                word += char
+    currTime = time.time()
+    print("time after: %f" % currTime)
+    global treeTime
+    treeTime = currTime - treeStart
+    print("difference = %f - %f = %f" % (treeStart, currTime, treeTime))
+
+    # hash table insertion
+    hashStart = time.time()
+    word = ""
+    print("time beofre hashtb insertion: %f" % hashStart)
+    for line in text: 
+        line = line.lower()
+        for char in line: 
+            if char == " " or char == "\"" or char == "," or char == "." or char == "?" or char == "…" \
+                or char == "€" or char == "¦" or char >= "Ç":
+                if word != "":
+                    # TODO: time these functions
                     obj.insert(word)
                 word = ""
             else:
                 word += char
+    currTime = time.time()
+    print("time after: %f" % currTime)
+    global hashTime
+    hashTime = currTime - hashStart
+    print("difference = %f - %f = %f" % (hashStart, currTime, hashTime))
+
 
 
 def makeFile(rallyList):
@@ -40,6 +77,14 @@ def makeFile(rallyList):
     return text
 
 
+def makeWC(txt):
+    stopwords = set(STOPWORDS)
+    mask = np.array(Image.open('trump3.png'))
+    wc = WordCloud(stopwords=stopwords, mask=mask, background_color="white")
+    wc.generate(txt)
+    wc.to_file(os.path.join(currdir, 'wc.png'))
+
+
 h = 600
 w = 800
 root = tk.Tk()
@@ -47,7 +92,6 @@ canvas = tk.Canvas(root, height=h, width=w)
 canvas.pack()
 
 # cloud
-
 # TODO: make sure cloud is retrieving proper text file
 
 wcPic = tk.PhotoImage(file='wc.png')
@@ -83,22 +127,23 @@ searchBar.place(rely=0.5, relwidth=1, relheight=0.5)
 searchButton = tk.Button(searchFrame, text="search", command=lambda: printInfo(searchBar.get()))
 searchButton.place(relx=0.5, relwidth=0.5, relheight=0.5)
 
-def printInfo(word):
-    cntHash = 0
-    cntTree = 0
+rallyStr = ''
+def build():
     rallyList = []
-    rallyStr = ''
     selectedRallies = box.curselection()
     for i in range(len(selectedRallies)):
         rallyList.append(box.get(selectedRallies[i]))
+        global rallyStr
         rallyStr += box.get(selectedRallies[i]) + '\n'
     # rallyList is a list of selected rally/file names to send to parsing function
-    # TODO: call makeFile(rallyList), which will call parse(newfile) to collect appropriate data
-    #       there should also be a way to retrieve the time it took to make & search each data structure
-    #       this time must outputted into the info string below
-    #           TODO: actually maybe move this to a different button
-    parse( makeFile(rallyList) )
-    # TODO: call count(word) to retrieve count and pass it to the string below
+    # makeFile(rallyList) will return a final text file with all the selected texts
+    finalTxt = makeFile(rallyList)
+    parse(finalTxt)
+    makeWC(finalTxt)
+
+def printInfo(word):
+    cntHash = 0
+    cntTree = 0
     infostr = 'You searched for: %s \n' % (word)
     infostr += 'From Rallies: \n%s' % (rallyStr)
     cntHash = obj.getCount(word)
@@ -106,20 +151,26 @@ def printInfo(word):
     infostr += 'Results from:\n'
     infostr += 'Hash Table: \t\t\t AVL Tree:\n'
     infostr += 'Count: %d \t\t\t Count: %d\n' % (cntHash, cntTree)
-    infostr += '//TODO: Print Search & Insert Time'
+    infostr += 'Insertion Time: %f \t\t Insertion Time: %f' % (hashTime, treeTime)
     infoLabel['text'] = infostr
 
 # rally selection
-select = tk.Frame(root, bg="black")
-select.place(relx=0.05, rely=0.2, relwidth=0.2, relheight=0.7)
+selectFrame = tk.Frame(root, bg="black")
+selectFrame.place(relx=0.05, rely=0.2, relwidth=0.2, relheight=0.7)
 
-box = tk.Listbox(select, bg="white", selectmode=tk.BROWSE)
-for x in range(len(spch)):
-    box.insert(x, spch[x])
-box.place(relx=0, rely=0, relwidth=1, relheight=1)
-# TODO: make parse button to press upon selection
-#       instruct user to parse first, then search
-# TODO LAST: make sure multiple selection works?
+box = tk.Listbox(selectFrame, bg="white", selectmode=tk.MULTIPLE)
+for x in range(len(spch)+2):
+    if (x==0):
+        box.insert(len(spch)+1, "testtxt1")
+    elif (x==1):
+        box.insert(len(spch)+2, "testtxt2")
+    else:
+        box.insert(x, spch[x-2])
+
+box.place(relx=0, rely=0.1, relwidth=1, relheight=0.9)
+
+selectButton = tk.Button(selectFrame, text="finalize selection", command=lambda: build())
+selectButton.place(relx=0, rely=0, relwidth=1, relheight=0.1)
 
 
 # display info

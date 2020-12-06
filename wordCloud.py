@@ -12,13 +12,13 @@ def make_wc(txt):
     wc.generate(txt)
     wc.to_file(os.path.join(currdir, 'wc.png'))
 
-def make_from(file):
-    with open(file) as f:
-        text = f.read()
+# def make_from(file):
+#     with open(file) as f:
+#         text = f.read()
         
-    make_wc(text)
+#     make_wc(text)
 
-file = input("Please enter the file name \n")
-make_from(file)
+# file = input("Please enter the file name \n")
+# make_from(file)
 
 # BattleCreekDec19_2019.txt
