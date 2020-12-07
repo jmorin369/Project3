@@ -1,1 +1,59 @@
-This is the second file, also containing a couple of words.
+Word Cloud
+ 
+ 
+ 
+Data Structures Implemented:
+Data Structures: Ordered Map (AVL Tree) and Unordered Map (Hash table)
+
+Data Structures Used:
+Whatever data structures were used to make the word library
+
+Distribution of Responsibility and Roles:
+John: AVL Tree & Data Parsing
+Poliana: UI and implementation of the word cloud.
+Alex: Hash Table implementation
+
+
+Analysis
+ 
+Changes and Rationale:
+The group chose not to implement any sorting algorithms as this was deemed unnecessary when these data structures already had their own methods of searching. Also, because the word cloud was implemented using a library instead of manually, we decided to add an additional plot that showed the frequency of certain word counts. This showed the variance in the words that donald trump used ie, the higher the number of 1’s and 2’s the more varied his speech and wider range of vocabulary.
+Worst case time complexity of major functions:
+Ordered Map:
+Note: n is equal to the number of nodes in the structure
+Search - O(log(n)): Only has to search through half the structure each time it goes down a layer, resulting in log2(n) time taken
+Add - O(log(n)): Has to search through the tree for where the node should be, so it has the complexity of the search time, plus a single rotation if necessary, resulting in O(log(n) + 1) which results in O(log(n)).
+printTree - O(n): Needs to print through every node in the tree regardless of any optimization involved.
+getCounts - O(n): Same with printTree. Needs to touch all of the nodes of the tree to make sure it updates count properly.
+ 
+Unordered Map:
+Note: n is the number of nodes stored at the index of the hash table (n will be less than 4, since n will only increase with each unwanted collision - an unwanted collision is one where two different words hash to the same key)
+Insert - O(1) in average case. O(n) in worst case (where n < 4). The insert function is O(n) in the worst case since if there is a collision where different words hash to the same key in the hash table, then an additional node is stored at that index in the hash table. N is less than 4 because there is not expected to be more than 3 unwanted collisions.
+getCount - O(1) in average case. O(n) in worst case (where n < 4). The getCount function is O(n) in the worst case since if there was a collision where two different words hashed to the same key in the hash table, then multiple nodes would exist at the hash table index. This means that the function must search through all of the nodes at that index.
+Note: m is the number of non-null indices in the hash table
+getCounts - O(m*n) in average and worst case (where n < 4). The getCounts function returns a map of all of the different counts and the number of times those counts exist in the hash table. To accomplish this, the getCounts function must iterate through each hash table index and each node at every hash table index. Hence, the time complexity is O(m*n). 
+ 
+User Interface / Parsing:
+
+
+Reflection
+ 
+Overall Experience:
+The overall experience as a group was positive even though there were definitely challenges along the way. As a group, our goal was to analyze the words spoken by Donald Trump in his rallies. We accomplished that by implementing a simple search of the rallies and expanding on that to increase functionality and improve user experience. By dividing up the work as a group, each member was able to focus on a specific section of the program. We were able to then combine these and create the final product. 
+ 
+Challenges Experienced:
+Many of the major challenges came from not understanding the scope of what we wanted to do. This was especially apparent when we thought we were on the same page, only to discover a week later that we had implemented different functions and needed to completely reorganize our code in order to be compatible with each other.
+ 
+Changes If Started Over:
+If we were to start over, we would definitely have set down a much clearer schedule from the start so that we would all be on the same page regarding the final product we wanted and the timeframe that we wanted it by. 
+ 
+Members Learned Experiences:
+John: I learned how to work with python in addition to working on a group using GitHub. I also became much more familiar with balancing trees as I had not done that efficiently and when I have thousands of nodes, the efficiency in adding becomes much more pronounced.
+Alex: Working on this project, I was able to learn a programming language I had never used before, python, as well as become more familiar with implementing and using hash tables. Both will be very helpful moving forward in classes, projects, and beyond.
+Poliana: 
+ 
+
+References
+
+AVL tree: Base structure was referenced from John Morin’s Project 1 from the Data Structures & Algorithms course
+Word Cloud: Reference the word cloud library
