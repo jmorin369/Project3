@@ -39,14 +39,12 @@ def parse(text):
     for line in text: 
         line = line.lower()
         for char in line: 
-            if char == " " or char == "\"" or char == "," or char == "." or char == "?" or char == "…" \
-                or char == "€" or char == "¦" or char >= "Ç":
-                if word != "":
-                    omap.add(word)
-                    wordCount += 1
-                word = ""
-            else:
+            if (char >= 'a' and char <= 'z') or char == '/'':
                 word += char
+            elif char == " ":
+                if word != "":
+                    omap.add(word, speech)
+                word = ""
     currTime = time.time()
     # print("time after: %f" % currTime)
     treeTime = currTime - startTime
@@ -59,13 +57,12 @@ def parse(text):
     for line in text: 
         line = line.lower()
         for char in line: 
-            if char == " " or char == "\"" or char == "," or char == "." or char == "?" or char == "…" \
-                or char == "€" or char == "¦" or char >= "Ç":
-                if word != "":
-                    obj.insert(word)
-                word = ""
-            else:
+            if (char >= 'a' and char <= 'z') or char == '/'':
                 word += char
+            elif char == " ":
+                if word != "":
+                    omap.add(word, speech)
+                word = ""
     currTime = time.time()
     # print("time after: %f" % currTime)
     hashTime = currTime - startTime
