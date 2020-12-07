@@ -60,17 +60,6 @@ class HashTable:
                     return size
         return 0  # word not found in hash table
 
-    def getKMostFrequent(self, k):
-        # find top k most used words
-        freqList = []  # list to store tuples of all word and word counts
-        for arr in self.table:
-            if arr is not None:
-                for word in arr:
-                    pair = (word.key, word.cnt)  # pair <string,int> (word, count)
-                    freqList.append(pair)
-        freqList.sort(key=lambda x: x[1], reverse=True)  # sort list by word count
-        return freqList[0:k]  # return list of k most used words
-
     def getCounts(self):
         # get dictionary of counts and how many times each count exists
         Dict = {}
@@ -82,60 +71,3 @@ class HashTable:
                     else:                           # else if count is not yet a key in the dict
                         Dict[word.cnt] = 1
         return Dict  # return dict of all counts and number of repetitions of that count
-
-# Main Driver Code (for testing)
-# obj = HashTable()
-# obj.insert("Hash") #2
-# obj.insert("Hash")
-# obj.insert("AVL") #2
-# obj.insert("AVL")
-# obj.insert("implementation") #4
-# obj.insert("implementation")
-# obj.insert("implementation")
-# obj.insert("implementation")
-# obj.insert("table") #20
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("table")
-# obj.insert("Python") #8
-# obj.insert("Python")
-# obj.insert("Python")
-# obj.insert("Python")
-# obj.insert("Python")
-# obj.insert("Python")
-# obj.insert("Python")
-# obj.insert("Python")
-# obj.insert("Hat") #3
-# obj.insert("Hat")
-# obj.insert("Hat")
-# obj.insert("Three") #3
-# obj.insert("Three")
-# obj.insert("Three")
-# Dict = obj.getCounts()
-# print(Dict)
-# myList = obj.getKMostFrequent(3)
-# print(myList)
-# count = obj.getCount("Hash")
-# print(count)
-# count = obj.getCount("implementation")
-# print(count)
-# count = obj.getCount("table")
-# print(count)
-# count = obj.getCount("Python")
-# print(count)
