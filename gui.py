@@ -1,81 +1,74 @@
-# TODO FIX: every time selection is finalized, the text keeps getting re-added
-# TODO: make plot of comparison of word frequencies??
-# TODO: the plot isnt respecting the [0,100] range for some reason
-
 import os
 import time
-import tkinter as tk
-import hashtb as ht
 import avl as tree
+import hashtb as ht
+import tkinter as tk
+from pathlib import Path
 
-from wordcloud import WordCloud, STOPWORDS
-from PIL import Image
 import numpy as np
+from PIL import Image
+from wordcloud import WordCloud, STOPWORDS
 
+import matplotlib
 import matplotlib.pyplot as plt
 
 currdir = os.path.dirname(__file__)
-
 omap = tree.AVL()
 obj = ht.HashTable()
-
 # turns the set of txt files from avl.py into a touple for easy manipulation
 spch = [] 
 for item in sorted(tree.speeches):
     spch.append(item)
 
-treeTime = 0.0
-hashTime = 0.0
+
 wordCount = 0
-# print("time initialized to:%f%f"%(treeTime, hashTime))
+treeTime, hashTime = 0.0, 0.0
 def parse(text):
     global treeTime
     global hashTime
     global wordCount
-    # tree insertion
+    wordCount = 0
+    treeTime, hashTime = 0.0, 0.0
+    
+    # tree parsing and insertion
     startTime = time.time()
-    # print("time beofre tree insertion: %f" % startTime)
     word = ""
     for line in text: 
         line = line.lower()
         for char in line: 
-            if (char >= 'a' and char <= 'z') or char == '/'':
+            if (char >= 'a' and char <= 'z') or char == '\'':
                 word += char
             elif char == " ":
                 if word != "":
                     omap.add(word)
+                    wordCount += 1
                 word = ""
     currTime = time.time()
-    # print("time after: %f" % currTime)
     treeTime = currTime - startTime
-    # print("difference = %f - %f = %f" % (startTime, currTime, treeTime))
 
-    # hash table insertion
+    # hash table parsing and insertion
     startTime = time.time()
     word = ""
-    # print("time beofre hashtb insertion: %f" % startTime)
     for line in text: 
         line = line.lower()
         for char in line: 
-            if (char >= 'a' and char <= 'z') or char == '/'':
+            if (char >= 'a' and char <= 'z') or char == '\'':
                 word += char
             elif char == " ":
                 if word != "":
                     obj.insert(word)
                 word = ""
     currTime = time.time()
-    # print("time after: %f" % currTime)
     hashTime = currTime - startTime
-    # print("difference = %f - %f = %f" % (startTime, currTime, hashTime))
-
 
 
 def makeFile(rallyList):
     text = ''
     for it in range(len(rallyList)):
-        file = rallyList[it] + '.txt'
-        # print(file)
-        with open(file) as f:
+        full_path =  currdir + "/Speeches/"
+        full_path += rallyList[it] + '.txt'
+        print(full_path)
+        with open(full_path) as f:
             text += f.read()
     # print(text)
     return text
@@ -94,30 +87,52 @@ def makeWC(txt):
     plt.show()
 
 
+def freqPlot(): 
+    startTime = time.time()
+    obj.getCounts()
+    currTime = time.time()
+    hashCtTime = currTime - startTime
 
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-
-# from matplotlib.figure import Figure 
-# from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,  
-# NavigationToolbar2Tk) 
-
-def testplot(): 
-    
+    startTime = time.time()
     omap.getCounts()
-    lists = sorted(omap.counts.items()) # sorted by key, return a list of tuples
-    count, freq = zip(*lists) # unpack a list of pairs into two tuples
-    plt.bar(count[0:100], freq[0:100])
+    currTime = time.time()
+    treeCtTime = currTime - startTime
+
+    infoLabel2['text'] += '\nTraversal Time: %f' % (hashCtTime)
+    infoLabel3['text'] += '\nTraversal Time: %f' % (treeCtTime)
+    
+    pairs = sorted(omap.counts.items())
+    count, freq = zip(*pairs)
+    plt.bar(count[0:50], freq[0:50])
     plt.ylabel('Frequency')
     plt.xlabel('Count Value')
     plt.title('Frequency of Count Values')
     plt.show()
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+
+def countPlot():
+    global wordInfo
+    global countInfo
+    plt.bar(wordInfo, countInfo)
+    plt.ylabel('Frequency')
+    plt.title('Counts of Searched Words')
+    plt.show()
 
 
+def timePlot():
+    global timeInfo1
+    global timeInfo2
+    fig, ax = plt.subplots()
+    x = np.arange(len(wordInfo))
+    plt.bar(x - 0.35/2, timeInfo1, color = 'b', width = 0.35, label="Hash Table")
+    plt.bar(x + 0.35/2, timeInfo2, color = 'g', width = 0.35, label="AVL Tree")
+    plt.ylabel('Time (s)')
+    plt.title('Search Time Comparison')
+    ax.set_xticks(x)
+    ax.set_xticklabels(wordInfo)
+    ax.legend()
+    fig.tight_layout()
+    plt.show()
 
 
 h = 786
@@ -127,7 +142,8 @@ root.title("COP3530 Project 3 by Poli Sci Gurus")
 canvas = tk.Canvas(root, height=h, width=w)
 canvas.pack()
 
-# cloud
+
+# buttons frame
 wcPic = tk.PhotoImage(file='wc.png')
 trump = tk.PhotoImage(file='trumppic.png')
 
@@ -138,20 +154,16 @@ trumpPhoto = tk.Label(trumpFrame, image=trump)
 trumpPhoto.place(relx=0, rely=0, relwidth=1, relheight=1)
 
 cloudButton = tk.Button(trumpFrame, text="Word Cloud", command=lambda: makeWC(finalTxt))
-cloudButton.place(relx=0.01, rely=0.3, relwidth=0.2, relheight=0.1)
+cloudButton.place(relx=0.2, rely=0.32, relwidth=0.2, relheight=0.1)
 
-plotButton = tk.Button(trumpFrame, text="Count-Frequency Plot", command=lambda: testplot())
-plotButton.place(relx=0.26, rely=0.3, relwidth=0.3, relheight=0.1)
+plotButton = tk.Button(trumpFrame, text="Count-Frequency Plot", command=lambda: freqPlot())
+plotButton.place(relx=0.15, rely=0.47, relwidth=0.3, relheight=0.1)
 
-# def showCloud():
-#     # global wcPic
-#     # wcPic = tk.PhotoImage(file='wc.png')
-    
-#     # cloudFrame = tk.Frame(root, bg="black")
-#     # cloudFrame.place(relx=0.4, rely=0.6, relwidth=0.4, relheight=0.3)
+plotButton2 = tk.Button(trumpFrame, text="Word-Frequency Plot", command=lambda: countPlot())
+plotButton2.place(relx=0.15, rely=0.62, relwidth=0.3, relheight=0.1)
 
-#     # cloudPhoto = tk.Label(cloudFrame, image=wcPic)
-#     # cloudPhoto.place(relx=0.01, rely=0.01, relwidth=0.98, relheight=0.98)
+plotButton3 = tk.Button(trumpFrame, text="Time Comparison Plot", command=lambda: timePlot())
+plotButton3.place(relx=0.15, rely=0.77, relwidth=0.3, relheight=0.1)
 
 
 # search
@@ -167,20 +179,28 @@ searchBar.place(rely=0.25, relwidth=1, relheight=0.5)
 searchButton = tk.Button(searchFrame, text="Search", command=lambda: printInfo(searchBar.get()))
 searchButton.place(relx=0, rely=0.75, relwidth=1, relheight=0.25)
 
+
 rallyStr, finalTxt = '', ''
 def build():
+    global rallyStr
+    global finalTxt
+    rallyStr, finalTxt = '', ''
     rallyList = []
     selectedRallies = box.curselection()
     for i in range(len(selectedRallies)):
         rallyList.append(box.get(selectedRallies[i]))
-        global rallyStr
-        rallyStr += box.get(selectedRallies[i]) + ' '
+        # design choice: only display the first 3 selected rallies
+        if i<3:
+            rallyStr += box.get(selectedRallies[i]) + ' '
+        elif i==4:
+            rallyStr += '...'
     # rallyList is a list of selected rally/file names to send to parsing function
     # makeFile(rallyList) will return a final text file with all the selected texts
-    global finalTxt
     finalTxt = makeFile(rallyList)
     parse(finalTxt)
 
+
+# returns a list of the words entered into the search bar
 def parseSearch(words):
     wordList = []
     newstr = ''
@@ -190,30 +210,55 @@ def parseSearch(words):
         else:
             wordList.append(newstr)
             newstr = ''
+    wordList.append(newstr)
+    newstr = ''
     return wordList
 
+
+# prints info about first word's count and retrieval time
+wordInfo, countInfo, timeInfo1, timeInfo2 = [], [], [], []
 def printInfo(words):
-    wordList = parseSearch(words)
+    global wordInfo
+    global countInfo
+    global timeInfo1
+    global timeInfo2
+
     cntHash, cntTree = 0, 0
     treeSrchTime, hashSrchTime = 0.0, 0.0
-    infostr = 'You searched for: %s \n' % (words)
+
+    wordList = parseSearch(words)
+    wordInfo = wordList
+    
+    infostr = 'You searched for: %s \n' % (wordList[0])
     infostr += 'From Rallies: %s\n' % (rallyStr)
     infostr += 'Total Number of Words: %d' % (wordCount)
     infoLabel1['text'] = infostr
 
-    startTime = time.time()
-    cntHash = obj.getCount(wordList[0])
-    currTime = time.time()
-    treeSrchTime = currTime - startTime
+    for x in range(len(wordList)):
+        startTime = time.time()
+        cntHash = obj.getCount(wordList[x])
+        currTime = time.time()
+        hashSrchTime = currTime - startTime
+        if x==0: # first word, so store value for output
+            ht = hashSrchTime 
+        # vector of times for each word search with Hash table
+        timeInfo1.append(hashSrchTime)
 
-    startTime = time.time()
-    cntTree = (omap.search(wordList[0])).count
-    currTime = time.time()
-    treeSrchTime = currTime - startTime
+        startTime = time.time()
+        cntTree = (omap.search(wordList[x])).count
+        currTime = time.time()
+        treeSrchTime = currTime - startTime
+        if x==0: # first word, so store value for output
+            tt = treeSrchTime
+        # vector of times for each word searched with AVL tree
+        timeInfo2.append(treeSrchTime)
+        
+        # vector of counts for each word
+        countInfo.append(cntHash)
 
-    infostr = "AVL Tree:\n\nWord Count: %d\nInsertion Time: %f\nSearch Time: %f" % (cntTree, treeTime, treeSrchTime)
+    infostr = "AVL Tree:\n\nWord Count: %d\nInsertion Time: %f\nSearch Time: %f" % (cntTree, treeTime, tt)
     infoLabel2['text'] = infostr
-    infostr = "Hash Table:\n\nWord Count: %d\nInsertion Time: %f\nSearch Time: %f" % (cntHash, hashTime, hashSrchTime)
+    infostr = "Hash Table:\n\nWord Count: %d\nInsertion Time: %f\nSearch Time: %f" % (cntHash, hashTime, ht)
     infoLabel3['text'] = infostr
     
 
@@ -225,13 +270,8 @@ selectLabel = tk.Label(selectFrame, text="First, select the desired rallies: ")
 selectLabel.place(relx=0, rely=0, relwidth=1, relheight=0.05)
 
 box = tk.Listbox(selectFrame, bg="white", selectmode=tk.MULTIPLE)
-for x in range(len(spch)+2):
-    if (x==0):
-        box.insert(len(spch)+1, "testtxt1")
-    elif (x==1):
-        box.insert(len(spch)+2, "testtxt2")
-    else:
-        box.insert(x, spch[x-2])
+for x in range(len(spch)):
+    box.insert(x, spch[x])
 
 box.place(relx=0, rely=0.05, relwidth=1, relheight=0.9)
 

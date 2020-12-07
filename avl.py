@@ -13,6 +13,7 @@ class AVL(object):
         self.nodes = 0
         self.counts = dict()
         self.root  = None
+
 #########################################################
                ### Private Functions ###
 #########################################################
@@ -25,6 +26,7 @@ class AVL(object):
         child.left = root
         root.right = gchild
         return child
+
     def __rotateRight(self, root):        
         if (not root):
             return root 
@@ -33,6 +35,7 @@ class AVL(object):
         root.left   = gchild
         child.right = root
         return child
+
     def __rotateLeftRight(self, root):
         if (not root):
             return root
@@ -45,6 +48,7 @@ class AVL(object):
         root.left   = gchild
         # Rightward Rotation
         return self.__rotateRight(root)
+
     def __rotateRightLeft(self, root):
         if (not root):
                 return root
@@ -57,9 +61,10 @@ class AVL(object):
         root.right   = gchild;
         # Leftward Rotation
         return self.__rotateLeft(root)
+
 ## INSERTION ## 
     def __insert(self, root, word):
-        # BST Searh
+        # BST Search
         if (not root):
             self.nodes += 1
             return Node(word, 1), True
@@ -70,22 +75,22 @@ class AVL(object):
         else:
             root.count += 1
             return root, False
+
         # Balance tree
         if (Rotate):
             bf = self.findHeight(root.left) - self.findHeight(root.right)
             if (bf > 1):
-    #             child_bf = self.findHeight(root.left.left) - self.findHeight(root.left.right)
                 if (word < root.left.word): 
                     return self.__rotateRight(root), False
                 else:
                     return self.__rotateLeftRight(root), False
             elif (bf < -1):
-    #             child_bf = self.findHeight(root.right.left) - self.findHeight(root.right.right)
                 if (word < root.right.word):
                     return self.__rotateRightLeft(root), False
                 else:
                     return self.__rotateLeft(root), False
         return root, Rotate
+
 ## SEARCHING ##
     def __find(self, root, word):
         if (not root): 
@@ -96,6 +101,7 @@ class AVL(object):
             return self.__find(root.left, word)
         elif (root.word < word):
             return self.__find(root.right, word)
+
 ## PRINTING ##
     def __printInOrder(self, root):
         if (not root):
@@ -104,21 +110,7 @@ class AVL(object):
         print("{0}: {1}".format(root.word, root.count))
         self.__printInOrder(root.right)
             
-## TRAVERSING ##
-    def __printInOrder(self, root):
-        if (not root):
-            return
-        self.__printInOrder(root.left)
-        print("{0}: {1}".format(root.word, root.count))
-        self.__printInOrder(root.right)
-        
-    def __getInOrder(self, root, tree_array):
-        if (not root):
-            return
-        np.append(tree_array, self.__getInOrder(root.left, tree_array))
-        np.append(tree_array, root)
-        np.append(tree_array, self.__getInOrder(root.right, tree_array))
-        
+## TRAVERSING ##              
     def __countInOrder(self, root):
         if (not root):
             return
@@ -138,8 +130,10 @@ class AVL(object):
             self.root = Node(word,1)
         else:
             self.root, null = self.__insert(self.root, word)
+
     def search(self, word):
         return self.__find(self.root, word)
+
     def findHeight(self, root):
         height = 0;
         if (not root):
@@ -149,13 +143,9 @@ class AVL(object):
         height = max(height, self.findHeight(root.right))
         # Base Case
         return height + 1  
+
     def printTree(self):
         self.__printInOrder(self.root)
-        
-    def getTree(self):
-        tree_array = np.array(self.root);
-        np.append(tree_array, self.__getInOrder(self.root, tree_array))
-        return tree_array
         
     def getCounts(self):
         self.counts.clear()
@@ -164,11 +154,10 @@ class AVL(object):
 
     def printCount(self):
         print(self.nodes)
+
     def printHeight(self):
         print(self.findHeight(self.root))
 
-
-from pathlib import Path as path
 speeches = {"BattleCreekDec19_2019",
             "BemidjiSep18_2020", 
             "CharlestonFeb28_2020",
