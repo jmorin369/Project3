@@ -222,6 +222,7 @@ def printInfo(words):
     global countInfo
     global timeInfo1
     global timeInfo2
+    wordInfo, countInfo, timeInfo1, timeInfo2 = [], [], [], []
 
     cntHash, cntTree = 0, 0
     treeSrchTime, hashSrchTime = 0.0, 0.0
