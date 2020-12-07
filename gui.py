@@ -43,7 +43,7 @@ def parse(text):
                 word += char
             elif char == " ":
                 if word != "":
-                    omap.add(word, speech)
+                    omap.add(word)
                 word = ""
     currTime = time.time()
     # print("time after: %f" % currTime)
@@ -61,7 +61,7 @@ def parse(text):
                 word += char
             elif char == " ":
                 if word != "":
-                    omap.add(word, speech)
+                    obj.insert(word)
                 word = ""
     currTime = time.time()
     # print("time after: %f" % currTime)
