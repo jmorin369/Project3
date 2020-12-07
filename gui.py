@@ -1,5 +1,6 @@
-# TODO: reset everything before finalize selection so it wont keep adding onto it
+# TODO FIX: every time selection is finalized, the text keeps getting re-added
 # TODO: make plot of comparison of word frequencies??
+# TODO: the plot isnt respecting the [0,100] range for some reason
 
 import os
 import time
