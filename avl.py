@@ -1,3 +1,5 @@
+import numpy as np
+
 class Node:
     def __init__(self, word, count):
         self.count = count
@@ -9,6 +11,7 @@ class Node:
 class AVL(object):
     def __init__(self):
         self.nodes = 0
+        self.counts = dict()
         self.root  = None
 #########################################################
                ### Private Functions ###
@@ -100,6 +103,33 @@ class AVL(object):
         self.__printInOrder(root.left)
         print("{0}: {1}".format(root.word, root.count))
         self.__printInOrder(root.right)
+            
+## TRAVERSING ##
+    def __printInOrder(self, root):
+        if (not root):
+            return
+        self.__printInOrder(root.left)
+        print("{0}: {1}".format(root.word, root.count))
+        self.__printInOrder(root.right)
+        
+    def __getInOrder(self, root, tree_array):
+        if (not root):
+            return
+        np.append(tree_array, self.__getInOrder(root.left, tree_array))
+        np.append(tree_array, root)
+        np.append(tree_array, self.__getInOrder(root.right, tree_array))
+        
+    def __countInOrder(self, root):
+        if (not root):
+            return
+        self.__countInOrder(root.left)
+        if root.count in self.counts:
+            self.counts[root.count] += 1
+        else:
+            self.counts[root.count] = 1
+        self.__countInOrder(root.right)
+    
+    
 #########################################################
                 ### Public Functions ###
 #########################################################
@@ -121,6 +151,17 @@ class AVL(object):
         return height + 1  
     def printTree(self):
         self.__printInOrder(self.root)
+        
+    def getTree(self):
+        tree_array = np.array(self.root);
+        np.append(tree_array, self.__getInOrder(self.root, tree_array))
+        return tree_array
+        
+    def getCounts(self):
+        self.counts.clear()
+        self.__countInOrder(self.root)
+        return self.counts
+
     def printCount(self):
         print(self.nodes)
     def printHeight(self):

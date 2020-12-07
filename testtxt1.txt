@@ -1,1 +1,24 @@
-This is the first file with a couple words.
+Poli Sci Gurus
+John Morin, Poliana Martins de Santana, Alex Liu
+Analysis of Donald Trump Rallies
+GitHub Link: https://github.com/jmorin369/Project3.git
+Video Link: 
+ 
+Extended and Refined Proposal
+ 
+Problem: What problem are we trying to solve?
+The words of Donald Trump during his rallies inspire awe and admiration from all listeners. The uses of his vast vocabulary have yet to be truly explored to the fullest extent that they deserve. We attempted to remedy this issue by analyzing his varied vernacular and delving into his deft proficiency of the English language.
+ 
+Motivation: Why is this a problem?
+As true analysts of Donald Trump’s linguistic prowess, we endeavored to understand the deeper meaning behind his idioms. We hoped to look beyond the ocherous exterior and observe the enigmatic brain that powers it. Hopefully, you will gain a bit of wisdom by learning the true extent of which he uses popular words such as “China” and “Fake”, in addition to what words truly grace his mouth most frequently.
+ 
+Features Implemented: When do we know that we have solved the problem?
+We were able to accurately and quickly count how many times Donald Trump has said each word in all of his speeches. In addition, we created a groovy graphic to display the contents in an easily digestible format.
+ 
+Description of Data: (Public data set we used and the link to the public data set)
+The dataset we used contains transcripts from 35 of Donald Trump’s campaign speeches given between 2019 and 2020. Each speech is given as a text file and is a full transcript. These speeches were given at rallies held in 19 different states.
+https://www.kaggle.com/christianlillelund/donald-trumps-rallies
+
+Tools / Languages / APIs / Libraries: Programming languages or any tools/frameworks we used
+We used Python for our project
+Python gave access to a word cloud library that was created by Andreas Muller, and we used that as a visual representation of the frequency of words used. More information can be found through this link: https://python-graph-gallery.com/wordcloud/
